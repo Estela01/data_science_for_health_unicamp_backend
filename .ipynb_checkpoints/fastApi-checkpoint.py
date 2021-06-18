@@ -13,7 +13,7 @@ app = FastAPI()
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://192.168.0.2:3000", "http://192.168.0.2","*"],
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -23,9 +23,6 @@ class UnicornException(Exception):
     def __init__(self, name: str, status_code: int):
         self.name = name
         self.status_code = status_code
-
-
-app = FastAPI()
 
 
 @app.exception_handler(UnicornException)
@@ -55,4 +52,5 @@ async def read_item(year: int = 2019):
 
 
 if __name__ == "__main__":
-    uvicorn.run("fastApi:app", host="127.0.0.1", port=5000, log_level="info")
+    uvicorn.run("fastApi:app", host="127.0.0.1", port=3000, log_level="info") 
+    #uvicorn.run("fastApi:app", host="192.168.0.9", port=3000, log_level="info")
