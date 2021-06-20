@@ -78,5 +78,5 @@ async def read_item():
        raise UnicornException(name="Server Error", status_code= 500)
 
 if __name__ == "__main__":
-    uvicorn.run("fastApi:app", host="127.0.0.1", port=3000, log_level="info") 
-    #uvicorn.run("fastApi:app", host="192.168.0.9", port=3000, log_level="info")
+#     uvicorn.run("fastApi:app", host="127.0.0.1", port=3000, log_level="info") 
+    uvicorn.run("fastApi:app", host="192.168.0.9", port=3000, log_level="info")

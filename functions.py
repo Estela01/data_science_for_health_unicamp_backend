@@ -36,6 +36,7 @@ def getAnomaliasbyCidades(year, cid10):
     dtTemp = pd.DataFrame()
     if(cid10):
         df = df[df["CODANOMAL"].replace('X', '').replace('D', '').str.contains(cid10.strip() )]
+        df["CODANOMAL"] = df["CODANOMAL"].replace(regex=r'.+', value=cid10.strip())
     cidades = df["CODMUNNASC"].unique()
     array_anomal_cidade = []
     for cidade in cidades:
@@ -50,6 +51,7 @@ def getAnomaliasAllYears(cid10):
     dtTemp = dtAll
     if(cid10):
         dtTemp = dtTemp[dtTemp["CODANOMAL"].replace('X', '').replace('D', '').str.contains(cid10.strip())]
+        dtTemp["CODANOMAL"] = dtTemp["CODANOMAL"].replace(regex=r'.+', value=cid10.strip())
     cidades = dtTemp["CODMUNNASC"].unique()
     array_anomal_cidade = []
     for cidade in cidades:
