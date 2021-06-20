@@ -31,8 +31,11 @@ def anomaliaFetch(arrayAnomalias):
     return { "anomalias": anomaliasObjects , "total":  len(completedArray) }
 
 
-def getAnomaliasbyCidades(year):
+def getAnomaliasbyCidades(year, cid10):
     df = pd.read_csv("./sp_{}_clean.csv".format(year))
+    dtTemp = pd.DataFrame()
+    if(cid10):
+        df = df[df["CODANOMAL"].replace('X', '').replace('D', '').str.contains(cid10.strip() )]
     cidades = df["CODMUNNASC"].unique()
     array_anomal_cidade = []
     for cidade in cidades:
@@ -43,12 +46,15 @@ def getAnomaliasbyCidades(year):
         array_anomal_cidade.append(json)
     return pd.DataFrame(array_anomal_cidade)
 
-def getAnomaliasAllYears():
-    cidades = dtAll["CODMUNNASC"].unique()
+def getAnomaliasAllYears(cid10):
+    dtTemp = dtAll
+    if(cid10):
+        dtTemp = dtTemp[dtTemp["CODANOMAL"].replace('X', '').replace('D', '').str.contains(cid10.strip())]
+    cidades = dtTemp["CODMUNNASC"].unique()
     array_anomal_cidade = []
     for cidade in cidades:
         json =   {"id" : cidade}
-        arrayAnomalias = dtAll[dtAll["CODMUNNASC"] == cidade ]["CODANOMAL"].to_numpy()
+        arrayAnomalias = dtTemp[dtTemp["CODMUNNASC"] == cidade ]["CODANOMAL"].to_numpy()
         infos = anomaliaFetch(arrayAnomalias)
         json.update(infos)
         array_anomal_cidade.append(json)

@@ -36,20 +36,19 @@ async def root():
     return {"message": "Hello World"}
 
 @app.get("/getAnomalias/")
-async def read_item(year: int = 2019, cid10: str = "Teste"):
+async def read_item(year: int = 2019, cid10: str = None):
     
     if year != -1 and (year < 2009 or year > 2019):
        raise UnicornException(name="Não foi encontrado dados para esse ano.", status_code=404)
             
     try:
-        print(cid10)
         if year == -1:
-            anomaliasAllYears = getAnomaliasAllYears()
+            anomaliasAllYears = getAnomaliasAllYears(cid10)
             result = anomaliasAllYears.to_json(orient = "records")
             parsed = jsonable_encoder(result)
             return JSONResponse(content=parsed)
         
-        anomaliasByCidades = getAnomaliasbyCidades(year)
+        anomaliasByCidades = getAnomaliasbyCidades(year, cid10)
         result = anomaliasByCidades.to_json(orient = "records")
         parsed = jsonable_encoder(result)
         return JSONResponse(content=parsed)
@@ -70,9 +69,10 @@ async def read_item():
 @app.get("/getListYears/")
 async def read_item():
     try:
-        yearList = [{"id": -1, "label": "Todos"}]
+        yearList = []
         for year in range(2009, 2020):
             yearList.append({"id": year, "label": "{}".format(year)})
+        yearList.append({"id": -1, "label": "Todos"})
         return JSONResponse(content=yearList)
     except:
        raise UnicornException(name="Server Error", status_code= 500)
