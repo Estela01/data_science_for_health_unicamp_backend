@@ -5,7 +5,7 @@ from fastapi.responses import JSONResponse
 
 import json
 
-from functions import getAnomaliasbyCidades, getListAnomalias, getAnomaliasAllYears
+from functions import getAnomaliasbyCidades, getListAnomalias, getAnomaliasAllYears,allYearsAnomaliaOcurrences
 from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
@@ -38,7 +38,7 @@ async def root():
 @app.get("/getAnomalias/")
 async def read_item(year: int = 2019, cid10: str = None):
     
-    if year != -1 and (year < 2009 or year > 2019):
+    if year != -1 and (year < 2010 or year > 2019):
        raise UnicornException(name="Não foi encontrado dados para esse ano.", status_code=404)
             
     try:
@@ -47,6 +47,7 @@ async def read_item(year: int = 2019, cid10: str = None):
             result = anomaliasAllYears.to_json(orient = "records")
             parsed = jsonable_encoder(result)
             return JSONResponse(content=parsed)
+   
         
         anomaliasByCidades = getAnomaliasbyCidades(year, cid10)
         result = anomaliasByCidades.to_json(orient = "records")
@@ -70,13 +71,24 @@ async def read_item():
 async def read_item():
     try:
         yearList = []
-        for year in range(2009, 2020):
+        for year in range(2010, 2020):
             yearList.append({"id": year, "label": "{}".format(year)})
         yearList.append({"id": -1, "label": "Todos"})
         return JSONResponse(content=yearList)
     except:
        raise UnicornException(name="Server Error", status_code= 500)
 
+@app.get("/getOcurrencesLastDecade/")
+async def read_item(cid10, cidade):
+    try:
+        lista = allYearsAnomaliaOcurrences(cid10, cidade)
+        result = lista.to_json(orient = "records")
+        parsed = jsonable_encoder(result)
+        return JSONResponse(content=parsed)
+    except:
+       raise UnicornException(name="Server Error", status_code= 500)
+
+
 if __name__ == "__main__":
 #     uvicorn.run("fastApi:app", host="127.0.0.1", port=3000, log_level="info") 
-    uvicorn.run("fastApi:app", host="192.168.0.9", port=3000, log_level="info")
+    uvicorn.run("fastApi:app", host="192.168.0.9", port=5000, log_level="info")
